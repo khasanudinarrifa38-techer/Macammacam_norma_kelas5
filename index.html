@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuis Interaktif Bab 2: Macam-Macam Norma</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 via-blue-50 to-indigo-100 min-h-screen font-sans text-slate-800 flex flex-col justify-between">
+
+  <!-- Header / Navbar -->
+  <header class="bg-indigo-600 text-white shadow-md p-4 sticky top-0 z-50">
+    <div class="max-w-3xl mx-auto flex justify-between items-center">
+      <div>
+        <h1 class="text-lg font-bold">Kuis PPKn Kelas V</h1>
+        <p class="text-xs text-indigo-200">Bab 2: Macam-Macam Norma</p>
+      </div>
+      <div id="timer-box" class="hidden flex items-center bg-indigo-800 px-3 py-1.5 rounded-lg border border-indigo-400">
+        <svg class="w-5 h-5 text-amber-300 mr-2 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span id="timer" class="font-mono text-lg font-bold text-amber-300">60s</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="max-w-3xl w-full mx-auto p-4 my-auto">
+    
+    <!-- Start Screen -->
+    <div id="start-screen" class="glass rounded-2xl shadow-xl p-8 text-center border border-indigo-100">
+      <div class="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-800 mb-2">Evaluasi Pembelajaran Norma</h2>
+      <p class="text-slate-600 mb-6 max-w-md mx-auto text-sm">
+        Uji pemahamanmu tentang materi norma dengan 30 soal latihan interaktif!
+      </p>
+
+      <div class="grid grid-cols-3 gap-3 mb-6 text-left max-w-lg mx-auto text-xs sm:text-sm">
+        <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+          <span class="block font-semibold text-indigo-900">15 PG</span>
+          <span class="text-slate-500">Pilihan Ganda</span>
+        </div>
+        <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+          <span class="block font-semibold text-indigo-900">10 PG Kompleks</span>
+          <span class="text-slate-500">Pilih > 1 jawaban</span>
+        </div>
+        <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+          <span class="block font-semibold text-indigo-900">5 Benar/Salah</span>
+          <span class="text-slate-500">Opsi B atau S</span>
+        </div>
+      </div>
+
+      <div class="bg-amber-50 border-l-4 border-amber-500 p-3 mb-6 text-left max-w-lg mx-auto text-xs text-amber-800">
+        <p class="font-bold">Ketentuan Waktu:</p>
+        <p>Setiap soal dibatasi <strong>60 detik (1 menit)</strong>. Jika waktu habis, jawaban otomatis tersimpan dan berlanjut ke soal berikutnya.</p>
+      </div>
+
+      <button id="start-btn" class="w-full sm:w-auto px-8 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+        Mulai Kerjakan
+      </button>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden glass rounded-2xl shadow-xl p-6 border border-indigo-100">
+      <div class="mb-4">
+        <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-1">
+          <span id="question-type-badge" class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 uppercase tracking-wider text-[10px]">Pilihan Ganda</span>
+          <span id="question-progress">Soal 1 dari 30</span>
+        </div>
+        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+          <div id="progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <h3 id="question-text" class="text-lg font-bold text-slate-800 leading-relaxed">
+          Teks soal akan ditampilkan di sini...
+        </h3>
+        <p id="multi-select-hint" class="hidden text-xs text-amber-600 font-medium mt-1">
+          * Catatan: Pilihan ini bisa memiliki lebih dari satu jawaban benar.
+        </p>
+      </div>
+
+      <div id="options-container" class="space-y-3 mb-6"></div>
+
+      <div class="flex justify-between items-center pt-4 border-t border-slate-100">
+        <span class="text-xs text-slate-400">Pilih jawaban terbaikmu</span>
+        <button id="next-btn" class="px-6 py-2.5 bg-indigo-600 text-white font-medium text-sm rounded-lg hover:bg-indigo-700 transition shadow">
+          Lanjut
+        </button>
+      </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div id="result-screen" class="hidden glass rounded-2xl shadow-xl p-8 text-center border border-indigo-100">
+      <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 bg-emerald-100 text-emerald-600">
+        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-slate-800 mb-1">Hasil Evaluasi</h2>
+      <p class="text-xs text-slate-500 mb-6">Materi: Bab 2 A. Macam-Macam Norma PPKn</p>
+
+      <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-6 max-w-sm mx-auto">
+        <p class="text-xs uppercase text-slate-400 font-semibold mb-1">Skor Akhir</p>
+        <p id="final-score" class="text-5xl font-extrabold text-indigo-600 mb-2">0</p>
+        <p id="score-details" class="text-sm text-slate-600">Menjawab benar 0 dari 30 soal</p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <button id="restart-btn" class="px-6 py-2.5 bg-indigo-600 text-white font-medium text-sm rounded-lg hover:bg-indigo-700 transition shadow">
+          Coba Lagi
+        </button>
+        <button id="pembahasan-btn" class="px-6 py-2.5 bg-emerald-600 text-white font-medium text-sm rounded-lg hover:bg-emerald-700 transition shadow flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+          Lihat Pembahasan
+        </button>
+      </div>
+    </div>
+
+    <!-- Slide Pembahasan Screen -->
+    <div id="pembahasan-screen" class="hidden glass rounded-2xl shadow-xl p-6 border border-indigo-100">
+      <div class="flex justify-between items-center pb-4 mb-4 border-b border-slate-200">
+        <div>
+          <h2 class="text-xl font-bold text-slate-800">Pembahasan Kuis</h2>
+          <p class="text-xs text-slate-500">Akses Guru / Administrator</p>
+        </div>
+        <button id="back-to-result-btn" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-300 transition">
+          Kembali ke Hasil
+        </button>
+      </div>
+
+      <div id="pembahasan-container" class="space-y-6 max-h-[65vh] overflow-y-auto pr-2">
+        <!-- Rincian Pembahasan Soal dimuat secara dinamis -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal Password -->
+  <div id="password-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full border border-slate-100">
+      <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3 text-emerald-600">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-bold text-center text-slate-800 mb-1">Akses Pembahasan</h3>
+      <p class="text-xs text-slate-500 text-center mb-4">Masukkan password administrator untuk membuka slide pembahasan.</p>
+      
+      <input type="password" id="password-input" placeholder="Masukkan password..." class="w-full px-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none text-sm mb-2 text-center">
+      <p id="password-error" class="hidden text-xs text-rose-500 font-semibold text-center mb-3">Password salah! Silakan coba lagi.</p>
+      
+      <div class="flex gap-2">
+        <button id="cancel-modal-btn" class="w-1/2 py-2 bg-slate-100 text-slate-600 font-medium text-xs rounded-xl hover:bg-slate-200 transition">
+          Batal
+        </button>
+        <button id="submit-password-btn" class="w-1/2 py-2 bg-indigo-600 text-white font-medium text-xs rounded-xl hover:bg-indigo-700 transition">
+          Buka
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center p-4 text-xs text-slate-400">
+    Soal disusun berdasarkan Materi PPKn Kelas V SD/MI Semester 1
+  </footer>
+
+  <script>
+    const labels = ["A", "B", "C", "D"];
+
+    // Data Soal Lengkap beserta Kunci dan Pembahasan
+    const quizData = [
+      // --- 15 PILIHAN GANDA ---
+      {
+        type: "single",
+        question: "Kata norma berasal dari bahasa Belanda 'norm' yang memiliki arti...",
+        options: ["Patokan, pedoman, atau pokok kaidah", "Sanksi atau hukuman tertulis", "Hukum dasar negara", "Sifat baku masyarakat"],
+        answer: [0],
+        explanation: "Dalam bahasa Belanda, kata 'norm' memiliki arti patokan, pedoman, atau pokok kaidah."
+      },
+      {
+        type: "single",
+        question: "Berdasarkan bahasa Latin, norma berasal dari kata 'mos' yang mengandung arti...",
+        options: ["Aturan resmi pemerintah", "Tata kelakuan, adat istiadat, atau kebiasaan", "Kumpulan undang-undang tertulis", "Hukuman tindak pidana"],
+        answer: [1],
+        explanation: "Kata 'mos' dalam bahasa Latin berarti tata kelakuan, adat istiadat, atau kebiasaan."
+      },
+      {
+        type: "single",
+        question: "Berikut ini yang merupakan pengertian norma menurut Kamus Besar Bahasa Indonesia (KBBI) adalah...",
+        options: ["Sesuatu yang boleh dilakukan tanpa batasan", "Aturan maupun ketentuan yang sifatnya mengikat suatu kelompok orang dalam masyarakat", "Nasihat guru kepada muridnya di kelas", "Hukuman fisik dari kepolisian"],
+        answer: [1],
+        explanation: "Menurut KBBI, norma adalah aturan maupun ketentuan yang sifatnya mengikat suatu kelompok orang dalam masyarakat."
+      },
+      {
+        type: "single",
+        question: "Norma yang sumber dasarnya berasal dari hati nurani manusia dinamakan norma...",
+        options: ["Hukum", "Kesopanan", "Kesusilaan", "Agama"],
+        answer: [2],
+        explanation: "Norma kesusilaan adalah aturan hidup yang bersumber dari hati nurani manusia untuk membedakan perilaku baik dan buruk."
+      },
+      {
+        type: "single",
+        question: "Norma yang timbul dari pergaulan sesama manusia dan menjunjung tinggi kebiasaan masyarakat setempat disebut norma...",
+        options: ["Kesopanan", "Agama", "Hukum", "Kesusilaan"],
+        answer: [0],
+        explanation: "Norma kesopanan timbul dari pergaulan sesama manusia yang berisi panduan tata krama dan kebiasaan setempat."
+      },
+      {
+        type: "single",
+        question: "Norma hukum diberlakukan dalam suatu negara dan dibentuk oleh...",
+        options: ["Tokoh adat daerah setempat", "Lembaga yang berwenang", "Masyarakat umum secara spontan", "Organisasi swasta"],
+        answer: [1],
+        explanation: "Norma hukum dibentuk oleh lembaga resmi/badan hukum yang berwenang di suatu negara dan sifatnya memaksa."
+      },
+      {
+        type: "single",
+        question: "Pengucilan sosial atau pengasingan dari lingkungan masyarakat merupakan sanksi bagi pelanggar norma...",
+        options: ["Hukum", "Kesusilaan", "Kesopanan", "Agama"],
+        answer: [2],
+        explanation: "Sanksi bagi pelanggar norma kesopanan umumnya berupa cemoohan, teguran, hingga pengucilan/pengasingan oleh masyarakat."
+      },
+      {
+        type: "single",
+        question: "Di antara jenis norma sosial berdasarkan tingkatan daya ikatan, norma manakah yang memiliki daya pengikat paling lemah?",
+        options: ["Kebiasaan (folkways)", "Tata kelakuan (mores)", "Cara (usage)", "Adat istiadat (custom)"],
+        answer: [2],
+        explanation: "Norma cara (usage) memiliki daya pengikat yang paling lemah, di mana pelanggarnya hanya mendapat teguran/cemoohan ringan."
+      },
+      {
+        type: "single",
+        question: "Ketika seseorang makan sambil berbicara lalu mendapat teguran, hal tersebut menunjukkan pelanggaran terhadap tingkatan norma...",
+        options: ["Cara (usage)", "Kebiasaan (folkways)", "Tata kelakuan (mores)", "Adat istiadat (custom)"],
+        answer: [0],
+        explanation: "Makan sambil berbicara adalah contoh pelanggaran norma cara (usage) yang daya ikatnya paling lemah."
+      },
+      {
+        type: "single",
+        question: "Tingkatan daya ikat norma yang sifatnya turun-temurun dan memiliki daya pengikat paling tinggi adalah...",
+        options: ["Usage", "Folkways", "Mores", "Custom (Adat istiadat)"],
+        answer: [3],
+        explanation: "Norma adat istiadat (custom) memuat daya pengikat paling tinggi dan diwariskan secara turun-temurun."
+      },
+      {
+        type: "single",
+        question: "Contoh norma adat istiadat (custom) yang berlaku pada masyarakat Batak adalah...",
+        options: ["Wajib mengenakan helm saat berkendara", "Dilarang menikahi pasangan yang bermarga sama", "Mengucapkan salam ketika masuk rumah", "Membayar pajak bumi dan bangunan"],
+        answer: [1],
+        explanation: "Larangan menikahi pasangan dengan marga sama merupakan norma adat istiadat (custom) dalam masyarakat Batak."
+      },
+      {
+        type: "single",
+        question: "Norma yang dirumuskan oleh pemerintah atau lembaga resmi seperti Peraturan Daerah No. 6 Tahun 2008 tergolong ke dalam norma...",
+        options: ["Nonformal", "Formal", "Kesusilaan", "Adat"],
+        answer: [1],
+        explanation: "Norma formal dirumuskan resmi oleh pihak berwenang seperti pemerintah/peraturan daerah."
+      },
+      {
+        type: "single",
+        question: "Aturan-aturan yang berlaku di dalam rumah/keluarga seperti tata cara makan dan pakaian termasuk jenis norma...",
+        options: ["Formal", "Nonformal", "Hukum pidana", "Adat istiadat mutlak"],
+        answer: [1],
+        explanation: "Norma nonformal merupakan aturan tidak tertulis yang dijalankan berdasarkan kebiasaan/kesadaran seperti di rumah."
+      },
+      {
+        type: "single",
+        question: "Fungsi norma yang membantu masyarakat dalam belajar dan menyesuaikan diri dengan lingkungan sosial dinamakan fungsi...",
+        options: ["Kontrol sosial", "Integrasi sosial", "Sosialisasi", "Adaptasi sosial"],
+        answer: [2],
+        explanation: "Fungsi sosialisasi membantu proses belajar dan penyesuaian diri anggota masyarakat terhadap lingkungan sosialnya."
+      },
+      {
+        type: "single",
+        question: "Tidur saat guru sedang menjelaskan materi pelajaran di dalam kelas merupakan bentuk pelanggaran norma...",
+        options: ["Hukum", "Kesopanan", "Agama", "Adat istiadat"],
+        answer: [1],
+        explanation: "Tidur di kelas saat guru mengajar melanggar norma kesopanan dan tata krama di lingkungan sekolah."
+      },
+
+      // --- 10 PILIHAN GANDA KOMPLEKS ---
+      {
+        type: "multiple",
+        question: "Manakah dari pernyataan berikut yang termasuk fungsi norma di tengah masyarakat? (Pilih semua yang benar)",
+        options: ["Fungsi sosialisasi", "Fungsi kontrol sosial", "Fungsi integrasi sosial", "Fungsi pemecah belah warga"],
+        answer: [0, 1, 2],
+        explanation: "Fungsi norma di masyarakat mencakup sosialisasi, kontrol sosial, integrasi sosial, dan adaptasi sosial."
+      },
+      {
+        type: "multiple",
+        question: "Manakah yang merupakan unsur dari rumusan perilaku norma? (Pilih semua yang benar)",
+        options: ["Perintah (harus dilakukan)", "Larangan (tidak boleh dilakukan)", "Anjuran (boleh dilakukan / ditinggalkan)", "Paksaan tanpa aturan"],
+        answer: [0, 1, 2],
+        explanation: "Rumusan perilaku norma memuat 3 hal: perintah (harus dilakukan), larangan (tidak boleh), dan anjuran (boleh dilakukan/ditinggalkan)."
+      },
+      {
+        type: "multiple",
+        question: "Pilihlah contoh-contoh tindakan yang tergolong pelanggaran norma hukum! (Pilih semua yang benar)",
+        options: ["Tidak mengenakan helm saat mengendarai motor", "Melakukan penipuan", "Tidak membawa STNK saat berkendara", "Tidur saat belajar di kelas"],
+        answer: [0, 1, 2],
+        explanation: "Tidak helm, penipuan, dan tanpa STNK melanggar undang-undang hukum. Tidur di kelas melanggar norma kesopanan."
+      },
+      {
+        type: "multiple",
+        question: "Sanksi negatif yang dialami pelanggar norma kesusilaan secara internal di dalam diri adalah... (Pilih semua yang benar)",
+        options: ["Perasaan gelisah", "Rasa cemas", "Perasaan kesal pada diri sendiri", "Hukuman kurungan penjara"],
+        answer: [0, 1, 2],
+        explanation: "Sanksi norma kesusilaan bersifat batiniah seperti merasa gelisah, cemas, dan penyesalan mendalam."
+      },
+      {
+        type: "multiple",
+        question: "Manakah berikut ini yang termasuk contoh penerapan norma kesopanan? (Pilih semua yang benar)",
+        options: ["Membiasakan budaya 3S (Salam, Sopan, Santun)", "Mempersilakan orang tua duduk di kursi prioritas bus", "Membayar Pajak Bumi dan Bangunan tepat waktu", "Mengucapkan permisi saat masuk rumah orang lain"],
+        answer: [0, 1, 3],
+        explanation: "Budaya 3S, memberi kursi prioritas, dan mengucapkan permisi adalah bentuk norma kesopanan. Membayar pajak adalah norma hukum."
+      },
+      {
+        type: "multiple",
+        question: "Pernyataan mana saja yang tepat menggambarkan ciri-ciri norma? (Pilih semua yang benar)",
+        options: ["Norma umumnya tidak tertulis dan dilakukan sebagai kebiasaan", "Hasil kesepakatan masyarakat yang dapat diterima bersama", "Sifatnya dinamis dan dapat berubah/diperbarui sesuai zaman", "Berlaku mutlak tanpa persetujuan warga"],
+        answer: [0, 1, 2],
+        explanation: "Norma biasanya tidak tertulis, hasil kesepakatan bersama, dan bersifat fleksibel/dinamis sesuai perkembangan zaman."
+      },
+      {
+        type: "multiple",
+        question: "Di bawah ini yang merupakan jenis norma berdasarkan tingkatan daya ikatnya adalah... (Pilih semua yang benar)",
+        options: ["Cara (Usage)", "Kebiasaan (Folkways)", "Kelakuan (Mores)", "Norma Formal"],
+        answer: [0, 1, 2],
+        explanation: "4 tingkatan daya ikat norma: Cara (Usage), Kebiasaan (Folkways), Tata Kelakuan (Mores), dan Adat Istiadat (Custom)."
+      },
+      {
+        type: "multiple",
+        question: "Berikut adalah beberapa contoh pelanggaran norma agama, yaitu... (Pilih semua yang benar)",
+        options: ["Melalaikan waktu ibadah dan berdoa", "Tidak menjadikan kitab suci sebagai pedoman", "Durhaka kepada orang tua", "Meludah di sembarang tempat"],
+        answer: [0, 1, 2],
+        explanation: "Melalaikan ibadah, mengabaikan kitab suci, dan durhaka melanggar norma agama. Meludah sembarangan melanggar norma kesopanan."
+      },
+      {
+        type: "multiple",
+        question: "Pilihlah yang termasuk contoh penerapan norma nonformal di lingkungan rumah! (Pilih semua yang benar)",
+        options: ["Aturan cara bersikap saat ada tamu", "Tata cara sopan santun saat makan dan minum", "Aturan berpakaian yang sopan", "Peraturan Daerah tentang penataan permukiman"],
+        answer: [0, 1, 2],
+        explanation: "Bersikap saat tamu, tata cara makan/minum, serta berpakaian di rumah adalah norma nonformal. Perda adalah norma formal."
+      },
+      {
+        type: "multiple",
+        question: "Apa saja konsekuensi/sanksi yang dapat diberikan bagi pelanggar norma hukum? (Pilih semua yang benar)",
+        options: ["Hukuman penjara", "Denda", "Hukuman mati", "Cemoohan tetangga"],
+        answer: [0, 1, 2],
+        explanation: "Sanksi norma hukum sangat tegas secara hukum positif: penjara, denda, hingga hukuman mati."
+      },
+
+      // --- 5 BENAR / SALAH ---
+      {
+        type: "single",
+        question: "Norma agama bersifat dogmatis, artinya aturan atau panduannya berasal dari kitab suci dan tidak bisa diubah.",
+        options: ["Benar", "Salah"],
+        answer: [0],
+        explanation: "Pernyataan Benar. Panduan agama bersifat dogmatis berasal dari kitab suci dan tidak dapat diubah manusia."
+      },
+      {
+        type: "single",
+        question: "Sanksi bagi orang yang melanggar norma cara (usage) adalah hukuman pidana penjara.",
+        options: ["Benar", "Salah"],
+        answer: [1],
+        explanation: "Pernyataan Salah. Sanksi pelanggaran norma cara (usage) sangat ringan, yaitu hanya teguran atau cemoohan."
+      },
+      {
+        type: "single",
+        question: "Sanksi positif dari pelaksanaan norma kontrol sosial dapat berupa pujian, penghargaan, atau hadiah.",
+        options: ["Benar", "Salah"],
+        answer: [0],
+        explanation: "Pernyataan Benar. Norma memberi sanksi positif (pujian/hadiah) dan sanksi negatif (celaan/hukuman)."
+      },
+      {
+        type: "single",
+        question: "Norma kesusilaan adalah aturan hidup yang bersumber dari lembaga legislatif pemerintah.",
+        options: ["Benar", "Salah"],
+        answer: [1],
+        explanation: "Pernyataan Salah. Norma kesusilaan bersumber dari hati nurani manusia, bukan dari lembaga legislatif."
+      },
+      {
+        type: "single",
+        question: "Sifat norma adalah fleksibel dan dinamis, artinya norma dapat menyesuaikan diri seiring perkembangan zaman.",
+        options: ["Benar", "Salah"],
+        answer: [0],
+        explanation: "Pernyataan Benar. Ciri norma bersifat fleksibel dan dinamis untuk dapat menyesuaikan perubahan zaman."
+      }
+    ];
+
+    // State Variables
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedOptions = [];
+    let userAnswers = new Array(quizData.length).fill(null);
+    let timerInterval = null;
+    let timeLeft = 60;
+
+    // DOM Elements
+    const startScreen = document.getElementById('start-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const pembahasanScreen = document.getElementById('pembahasan-screen');
+    
+    const startBtn = document.getElementById('start-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const pembahasanBtn = document.getElementById('pembahasan-btn');
+    const backToResultBtn = document.getElementById('back-to-result-btn');
+
+    const timerBox = document.getElementById('timer-box');
+    const timerEl = document.getElementById('timer');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const questionProgress = document.getElementById('question-progress');
+    const progressBar = document.getElementById('progress-bar');
+    const questionTypeBadge = document.getElementById('question-type-badge');
+    const multiSelectHint = document.getElementById('multi-select-hint');
+
+    // Password Modal Elements
+    const passwordModal = document.getElementById('password-modal');
+    const passwordInput = document.getElementById('password-input');
+    const passwordError = document.getElementById('password-error');
+    const cancelModalBtn = document.getElementById('cancel-modal-btn');
+    const submitPasswordBtn = document.getElementById('submit-password-btn');
+
+    // Event Listeners
+    startBtn.addEventListener('click', startQuiz);
+    nextBtn.addEventListener('click', handleNextQuestion);
+    restartBtn.addEventListener('click', startQuiz);
+    pembahasanBtn.addEventListener('click', openPasswordModal);
+    cancelModalBtn.addEventListener('click', closePasswordModal);
+    submitPasswordBtn.addEventListener('click', checkPassword);
+    backToResultBtn.addEventListener('click', showResultScreen);
+
+    function startQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      userAnswers = new Array(quizData.length).fill(null);
+      
+      startScreen.classList.add('hidden');
+      resultScreen.classList.add('hidden');
+      pembahasanScreen.classList.add('hidden');
+      quizScreen.classList.remove('hidden');
+      timerBox.classList.remove('hidden');
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      resetTimer();
+      selectedOptions = [];
+      const data = quizData[currentQuestion];
+
+      questionProgress.innerText = `Soal ${currentQuestion + 1} dari ${quizData.length}`;
+      progressBar.style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+      
+      if (data.type === 'single') {
+        if (currentQuestion >= 25) {
+          questionTypeBadge.innerText = 'Benar / Salah';
+          questionTypeBadge.className = 'px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-wider text-[10px]';
+        } else {
+          questionTypeBadge.innerText = 'Pilihan Ganda';
+          questionTypeBadge.className = 'px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 uppercase tracking-wider text-[10px]';
+        }
+        multiSelectHint.classList.add('hidden');
+      } else {
+        questionTypeBadge.innerText = 'Pilihan Ganda Kompleks';
+        questionTypeBadge.className = 'px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 uppercase tracking-wider text-[10px]';
+        multiSelectHint.classList.remove('hidden');
+      }
+
+      questionText.innerText = data.question;
+
+      optionsContainer.innerHTML = '';
+      data.options.forEach((opt, idx) => {
+        const optionBtn = document.createElement('div');
+        optionBtn.className = 'p-3.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/50 cursor-pointer transition flex items-center space-x-3 select-none';
+        
+        const optionBadge = `<span class="w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 font-bold text-xs badge-label">${labels[idx]}</span>`;
+
+        optionBtn.innerHTML = `
+          ${optionBadge}
+          <span class="text-sm font-medium text-slate-700 leading-snug flex-grow">${opt}</span>
+        `;
+
+        optionBtn.addEventListener('click', () => selectOption(idx, optionBtn, data.type));
+        optionsContainer.appendChild(optionBtn);
+      });
+
+      startTimer();
+    }
+
+    function selectOption(index, element, type) {
+      if (type === 'single') {
+        selectedOptions = [index];
+        Array.from(optionsContainer.children).forEach((child, i) => {
+          const badge = child.querySelector('.badge-label');
+          if (i === index) {
+            child.className = 'p-3.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/80 cursor-pointer transition flex items-center space-x-3 select-none';
+            badge.className = 'w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg bg-indigo-600 text-white font-bold text-xs badge-label';
+          } else {
+            child.className = 'p-3.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 cursor-pointer transition flex items-center space-x-3 select-none';
+            badge.className = 'w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 font-bold text-xs badge-label';
+          }
+        });
+      } else {
+        const pos = selectedOptions.indexOf(index);
+        const badge = element.querySelector('.badge-label');
+
+        if (pos > -1) {
+          selectedOptions.splice(pos, 1);
+          element.className = 'p-3.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-300 cursor-pointer transition flex items-center space-x-3 select-none';
+          badge.className = 'w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg bg-slate-100 text-slate-600 font-bold text-xs badge-label';
+        } else {
+          selectedOptions.push(index);
+          element.className = 'p-3.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/80 cursor-pointer transition flex items-center space-x-3 select-none';
+          badge.className = 'w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-lg bg-indigo-600 text-white font-bold text-xs badge-label';
+        }
+      }
+    }
+
+    function handleNextQuestion() {
+      evaluateCurrentQuestion();
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    function evaluateCurrentQuestion() {
+      const data = quizData[currentQuestion];
+      selectedOptions.sort();
+      userAnswers[currentQuestion] = [...selectedOptions];
+
+      const correctAns = [...data.answer].sort();
+      const isCorrect = selectedOptions.length === correctAns.length &&
+        selectedOptions.every((val, index) => val === correctAns[index]);
+
+      if (isCorrect) {
+        score++;
+      }
+    }
+
+    function startTimer() {
+      timeLeft = 60;
+      timerEl.innerText = `${timeLeft}s`;
+
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerEl.innerText = `${timeLeft}s`;
+
+        if (timeLeft <= 10) {
+          timerEl.classList.add('text-rose-400');
+        } else {
+          timerEl.classList.remove('text-rose-400');
+        }
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          handleNextQuestion();
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+    }
+
+    function finishQuiz() {
+      resetTimer();
+      timerBox.classList.add('hidden');
+      quizScreen.classList.add('hidden');
+      resultScreen.classList.remove('hidden');
+
+      const finalPercentage = Math.round((score / quizData.length) * 100);
+      document.getElementById('final-score').innerText = finalPercentage;
+      document.getElementById('score-details').innerText = `Menjawab benar ${score} dari ${quizData.length} soal`;
+    }
+
+    // Modal & Password Handlers
+    function openPasswordModal() {
+      passwordModal.classList.remove('hidden');
+      passwordInput.value = '';
+      passwordError.classList.add('hidden');
+      passwordInput.focus();
+    }
+
+    function closePasswordModal() {
+      passwordModal.classList.add('hidden');
+    }
+
+    function checkPassword() {
+      const password = passwordInput.value;
+      if (password === "admin123") {
+        closePasswordModal();
+        renderPembahasanScreen();
+      } else {
+        passwordError.classList.remove('hidden');
+      }
+    }
+
+    function showResultScreen() {
+      pembahasanScreen.classList.add('hidden');
+      resultScreen.classList.remove('hidden');
+    }
+
+    function renderPembahasanScreen() {
+      resultScreen.classList.add('hidden');
+      pembahasanScreen.classList.remove('hidden');
+
+      const container = document.getElementById('pembahasan-container');
+      container.innerHTML = '';
+
+      quizData.forEach((q, idx) => {
+        const uAns = userAnswers[idx] || [];
+        const isCorrect = uAns.length === q.answer.length && uAns.sort().every((v, i) => v === [...q.answer].sort()[i]);
+
+        const card = document.createElement('div');
+        card.className = `p-4 rounded-xl border ${isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200'}`;
+
+        const uAnsText = uAns.length > 0 
+          ? uAns.map(i => `${labels[i]}. ${q.options[i]}`).join(', ') 
+          : '<em>(Tidak Dijawab / Waktu Habis)</em>';
+
+        const kAnsText = q.answer.map(i => `${labels[i]}. ${q.options[i]}`).join(', ');
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded ${isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+              Soal ${idx + 1} (${isCorrect ? 'Benar' : 'Salah'})
+            </span>
+            <span class="text-[10px] uppercase font-semibold text-slate-400">
+              ${q.type === 'multiple' ? 'PG Kompleks' : (idx >= 25 ? 'Benar/Salah' : 'PG Biasa')}
+            </span>
+          </div>
+
+          <p class="font-semibold text-slate-800 text-sm mb-3">${q.question}</p>
+
+          <div class="text-xs space-y-1.5 mb-3 bg-white/80 p-3 rounded-lg border border-slate-100">
+            <p class="${isCorrect ? 'text-emerald-700' : 'text-rose-600'} font-medium">
+              <strong>Jawaban Anda:</strong> ${uAnsText}
+            </p>
+            <p class="text-indigo-900 font-medium">
+              <strong>Kunci Jawaban:</strong> ${kAnsText}
+            </p>
+          </div>
+
+          <div class="text-xs bg-indigo-50/70 p-3 rounded-lg border border-indigo-100 text-slate-700">
+            <strong class="text-indigo-900 block mb-0.5">Pembahasan:</strong>
+            ${q.explanation}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
